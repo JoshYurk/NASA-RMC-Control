@@ -38,7 +38,7 @@ namespace Control_Program
         public void InitializeUi()
         {
             var rectangle = Screen.FromControl(this).Bounds;
-            SetUpRobotInfo();
+            SetUpRobotInfo(rectangle);
             SetUpConnectionInfo(rectangle);
 
             _shutdownButton.Left = _connectButton.Left;
@@ -48,22 +48,9 @@ namespace Control_Program
             _shutdownButton.TabStop = false;
 
             Controls.Add(_shutdownButton);
-
-            _leftSideSpeed.Text = @"Left Side Speed: 0";
-            _leftSideSpeed.Top = rectangle.Bottom - 300;
-            _leftSideSpeed.Left = 5;
-            _leftSideSpeed.AutoSize = true;
-
-            _rightSideSpeed.Text = @"Right Side Speed: 0";
-            _rightSideSpeed.Left = _leftSideSpeed.Left;
-            _rightSideSpeed.Top = _leftSideSpeed.Bottom + 5;
-            _rightSideSpeed.AutoSize = true;
-
-            Controls.Add(_leftSideSpeed);
-            Controls.Add(_rightSideSpeed);
         }
 
-        private void SetUpRobotInfo()
+        private void SetUpRobotInfo(Rectangle rectangle)
         {
             _robotImage.Left = 10;
             _robotImage.Image = Image.FromFile(@"C:\Users\jyurk\OneDrive\Pictures\sadpsycho.jpg");
@@ -116,6 +103,19 @@ namespace Control_Program
             {
                 Controls.Add(motorLabel);
             }
+
+            _leftSideSpeed.Text = @"Left Side Speed: 0";
+            _leftSideSpeed.Top = (rectangle.Bottom + _motor4Label.Bottom) / 2;
+            _leftSideSpeed.Left = _robotImage.Left;
+            _leftSideSpeed.AutoSize = true;
+
+            _rightSideSpeed.Text = @"Right Side Speed: 0";
+            _rightSideSpeed.Left = _leftSideSpeed.Left;
+            _rightSideSpeed.Top = _leftSideSpeed.Bottom + 5;
+            _rightSideSpeed.AutoSize = true;
+
+            Controls.Add(_leftSideSpeed);
+            Controls.Add(_rightSideSpeed);
         }
 
         private void SetUpConnectionInfo(Rectangle rectangle)
