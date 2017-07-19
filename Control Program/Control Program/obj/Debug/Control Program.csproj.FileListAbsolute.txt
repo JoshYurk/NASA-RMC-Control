@@ -6,3 +6,5 @@ C:\Robotics Dev\nasa-rmc-control\Control Program\Control Program\obj\Debug\Contr
 C:\Robotics Dev\nasa-rmc-control\Control Program\Control Program\obj\Debug\Control Program.csproj.GenerateResource.Cache
 C:\Robotics Dev\nasa-rmc-control\Control Program\Control Program\obj\Debug\Control Program.exe
 C:\Robotics Dev\nasa-rmc-control\Control Program\Control Program\obj\Debug\Control Program.pdb
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Program\bin\Debug\Renci.SshNet.dll
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Program\bin\Debug\Renci.SshNet.xml
