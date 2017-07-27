@@ -8,23 +8,24 @@ namespace Control_Program
 {
     public partial class Form1 : Form
     {
-        readonly PictureBox _robotImage = new PictureBox();
-        readonly Button _connectButton = new Button();
-        readonly Button _shutdownButton = new Button();
-        readonly Label _connectionStatus = new Label();
-        readonly Label _connectionInformation = new Label();
-        readonly Label _motor1Current = new Label();
-        readonly Label _motor2Current = new Label();
-        readonly Label _motor3Current = new Label();
-        readonly Label _motor4Current = new Label();
-        readonly Label _motor1Label = new Label();
-        readonly Label _motor2Label = new Label();
-        readonly Label _motor3Label = new Label();
-        readonly Label _motor4Label = new Label();
-        readonly Label _leftSideSpeed = new Label();
-        readonly Label _rightSideSpeed = new Label();
+        private readonly PictureBox _robotImage = new PictureBox();
+        private readonly Button _connectButton = new Button();
+        private readonly Button _shutdownButton = new Button();
+        private readonly Label _connectionStatus = new Label();
+        private readonly Label _connectionInformation = new Label();
+        private readonly Label _motor1Current = new Label();
+        private readonly Label _motor2Current = new Label();
+        private readonly Label _motor3Current = new Label();
+        private readonly Label _motor4Current = new Label();
+        private readonly Label _motor1Label = new Label();
+        private readonly Label _motor2Label = new Label();
+        private readonly Label _motor3Label = new Label();
+        private readonly Label _motor4Label = new Label();
+        private readonly Label _leftSideSpeed = new Label();
+        private readonly Label _rightSideSpeed = new Label();
+        private readonly TextBox _ipAddressInput = new TextBox();
 
-        protected string RobotIpAddress = "192.168.1.134";
+        protected string RobotIpAddress = "127.0.0.1";
         protected string RobotUserName = "pi";
         protected string RobotPassword = "raspberry";
 
@@ -32,7 +33,14 @@ namespace Control_Program
         {
             InitializeComponent();
             WindowState = FormWindowState.Maximized;
+            Text = @"NASA Control Program";
             InitializeUi();
+        }
+
+        public sealed override string Text
+        {
+            get => base.Text;
+            set => base.Text = value;
         }
 
         public void InitializeUi()
@@ -46,8 +54,14 @@ namespace Control_Program
             _shutdownButton.Text = @"Emergency Shutdown";
             _shutdownButton.AutoSize = true;
             _shutdownButton.TabStop = false;
+            _shutdownButton.Click += _shutdownButton_Click;
 
             Controls.Add(_shutdownButton);
+        }
+
+        private static void _shutdownButton_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
 
         private void SetUpRobotInfo(Rectangle rectangle)
@@ -136,25 +150,52 @@ namespace Control_Program
             _connectionInformation.Left = _connectButton.Left;
             _connectionInformation.AutoSize = true;
 
+            _ipAddressInput.Left = _connectButton.Left - 110;
+            _ipAddressInput.Top = _connectButton.Top + 1;
+            _ipAddressInput.Width = 100;
+            _ipAddressInput.Height = _connectButton.Height;
+
             Controls.Add(_connectButton);
             Controls.Add(_connectionStatus);
             Controls.Add(_connectionInformation);
+            Controls.Add(_ipAddressInput);
         }
 
         private void _connectButton_Click(object sender, EventArgs e)
         {
-            if (_connectionStatus.Text == @"Not Connected To Robot")
+            RobotIpAddress = _ipAddressInput.Text;
+            try
             {
-                _connectionStatus.Text = @"Connected To Robot";
-                _connectButton.Text = @"Disconnect From Robot";
-                var connectionInformationText = _connectionInformation.Text;
-                _connectionInformation.Text = connectionInformationText + RobotIpAddress;
+                using (var client = new SshClient(RobotIpAddress, RobotUserName, RobotPassword))
+                {
+                    if (_connectionStatus.Text == @"Not Connected To Robot")
+                    {
+                        client.Connect();
+                        if (!client.IsConnected) return;
+
+                        _connectionStatus.Text = @"Connected To Robot";
+                        _connectButton.Text = @"Disconnect From Robot";
+                        var connectionInformationText = _connectionInformation.Text;
+                        _connectionInformation.Text = connectionInformationText + RobotIpAddress;
+                    }
+                    else
+                    {
+                        client.Disconnect();
+                        if (client.IsConnected) return;
+
+                        _connectionStatus.Text = @"Not Connected To Robot";
+                        _connectButton.Text = @"Connect To Robot";
+                        _connectionInformation.Text = @"Connected To: ";
+                    }
+                }
             }
-            else
+            catch (Exception exception)
             {
                 _connectionStatus.Text = @"Not Connected To Robot";
                 _connectButton.Text = @"Connect To Robot";
                 _connectionInformation.Text = @"Connected To: ";
+                MessageBox.Show(@"Failed To Connect To Robot", @"Error", MessageBoxButtons.OK);
+                return;
             }
         }
     }
