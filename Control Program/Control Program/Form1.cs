@@ -154,6 +154,7 @@ namespace Control_Program
             _ipAddressInput.Top = _connectButton.Top + 1;
             _ipAddressInput.Width = 100;
             _ipAddressInput.Height = _connectButton.Height;
+            _ipAddressInput.Text = @"IP Address";
 
             Controls.Add(_connectButton);
             Controls.Add(_connectionStatus);
@@ -164,9 +165,9 @@ namespace Control_Program
         private void _connectButton_Click(object sender, EventArgs e)
         {
             RobotIpAddress = _ipAddressInput.Text;
-            try
+            using (var client = new SshClient(RobotIpAddress, RobotUserName, RobotPassword))
             {
-                using (var client = new SshClient(RobotIpAddress, RobotUserName, RobotPassword))
+                try
                 {
                     if (_connectionStatus.Text == @"Not Connected To Robot")
                     {
@@ -188,14 +189,19 @@ namespace Control_Program
                         _connectionInformation.Text = @"Connected To: ";
                     }
                 }
-            }
-            catch (Exception exception)
-            {
-                _connectionStatus.Text = @"Not Connected To Robot";
-                _connectButton.Text = @"Connect To Robot";
-                _connectionInformation.Text = @"Connected To: ";
-                MessageBox.Show(@"Failed To Connect To Robot", @"Error", MessageBoxButtons.OK);
-                return;
+                catch (Exception exception)
+                {
+                    if (client.IsConnected)
+                    {
+                        client.Disconnect();
+                    }
+
+                    _connectionStatus.Text = @"Not Connected To Robot";
+                    _connectButton.Text = @"Connect To Robot";
+                    _connectionInformation.Text = @"Connected To: ";
+                    MessageBox.Show(@"Failed To Connect To Robot", @"Error", MessageBoxButtons.OK);
+                    return;
+                }
             }
         }
     }
