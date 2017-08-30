@@ -2,3 +2,4 @@
 *.cache
 Control Program/Communication Software/bin/Debug/Communication Software.pdb
 *.pdb
+*.suo
