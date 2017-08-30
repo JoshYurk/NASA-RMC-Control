@@ -1,5 +1,6 @@
 ﻿using System;
 using Core;
+using Core.Enums;
 using Renci.SshNet;
 
 namespace Communication_Software
@@ -15,12 +16,19 @@ namespace Communication_Software
 
         private static void StartSshConnection()
         {
-            using (SshClient sshClient = new SshClient(Constants.RobotIpAddress, Constants.RobotUsername, Constants.RobotPassword))
+            using (var sshClient = new SshClient(Constants.RobotIpAddress, Constants.RobotUsername, Constants.RobotPassword))
             {
                 sshClient.Connect();
                 if (sshClient.IsConnected)
                 {
-                    sshClient.RunCommand("ls");
+                    if (Constants.RobotOperatingSystem == RobotOperatingSystems.Linux.OperatingSystem)
+                    {
+                        sshClient.RunCommand("ls");
+                    }
+                    else if (Constants.RobotOperatingSystem == RobotOperatingSystems.Windows.OperatingSystem)
+                    {
+                        sshClient.RunCommand("dir");
+                    }
                 }
                 else
                 {
