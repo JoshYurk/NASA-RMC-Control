@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Control_Software.Getters;
-using Core;
 
 namespace Control_Software
 {
-    public partial class Form1 : Form
+    public sealed partial class Form1 : Form
     {
         public Form1()
         {
             InitializeComponent();
+            Text = @"NASA Control Program";
+            WindowState = FormWindowState.Maximized;
 
             var button = new Button
             {
@@ -29,12 +23,12 @@ namespace Control_Software
             Controls.Add(button);
         }
 
-        private void Button_Click(object sender, EventArgs e)
+        private static void Button_Click(object sender, EventArgs e)
         {
             StartCommunicationSoftware();
         }
 
-        protected void StartCommunicationSoftware()
+        private static void StartCommunicationSoftware()
         {
             var baseDirectory = DirectoryGetter.GetBaseDirectory(Directory.GetCurrentDirectory());
             var communicationUrl = baseDirectory + "\\Communication Software\\bin\\Debug\\Communication Software.exe";

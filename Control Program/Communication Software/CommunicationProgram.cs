@@ -9,6 +9,7 @@ namespace Communication_Software
     {
         private static void Main(string[] args)
         {
+            Console.Title = "Communication Software";
             Console.WriteLine("Kent State Robotics NASA Communication Software");
             StartSshConnection();
             Console.ReadLine();
@@ -18,21 +19,30 @@ namespace Communication_Software
         {
             using (var sshClient = new SshClient(Constants.RobotIpAddress, Constants.RobotUsername, Constants.RobotPassword))
             {
-                sshClient.Connect();
-                if (sshClient.IsConnected)
+                try
                 {
-                    if (Constants.RobotOperatingSystem == RobotOperatingSystems.Linux.OperatingSystem)
+                    Console.WriteLine("Connecting To: " + Constants.RobotIpAddress);
+                    sshClient.Connect();
+                    if (sshClient.IsConnected)
                     {
-                        sshClient.RunCommand("ls");
+                        Console.WriteLine("Connected");
+                        if (Constants.RobotOperatingSystem == RobotOperatingSystems.Linux.OperatingSystem)
+                        {
+                            sshClient.RunCommand("ls");
+                        }
+                        else if (Constants.RobotOperatingSystem == RobotOperatingSystems.Windows.OperatingSystem)
+                        {
+                            sshClient.RunCommand("dir");
+                        }
                     }
-                    else if (Constants.RobotOperatingSystem == RobotOperatingSystems.Windows.OperatingSystem)
+                    else
                     {
-                        sshClient.RunCommand("dir");
+                        Console.WriteLine("Failure To Connect");
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failure To Connect");
+                    Console.WriteLine("Error Connecting");
                 }
             }
         }

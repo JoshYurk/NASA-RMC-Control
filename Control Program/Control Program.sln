@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication Software", "Communication Software\Communication Software.csproj", "{2306928D-2BA3-48F6-8E16-53E069A93CDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Control Software", "Control Software\Control Software.csproj", "{7EA9A91C-5C97-4C9A-ACDA-F683992CA205}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2306928D-2BA3-48F6-8E16-53E069A93CDF} = {2306928D-2BA3-48F6-8E16-53E069A93CDF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{6CA3B7CA-5EFA-4F3C-A430-6475F447DC49}"
 EndProject
