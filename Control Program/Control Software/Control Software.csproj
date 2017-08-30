@@ -7,7 +7,7 @@
     <ProjectGuid>{7EA9A91C-5C97-4C9A-ACDA-F683992CA205}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Control_Software</RootNamespace>
-    <AssemblyName>Control_Software</AssemblyName>
+    <AssemblyName>Control Software</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

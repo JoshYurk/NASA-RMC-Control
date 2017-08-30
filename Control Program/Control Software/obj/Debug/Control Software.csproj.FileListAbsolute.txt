@@ -1,0 +1,8 @@
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\bin\Debug\Control Software.exe.config
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\bin\Debug\Control Software.exe
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\bin\Debug\Control Software.pdb
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\obj\Debug\Control Software.csprojResolveAssemblyReference.cache
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\obj\Debug\Control_Software.Properties.Resources.resources
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\obj\Debug\Control Software.csproj.GenerateResource.Cache
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\obj\Debug\Control Software.exe
+C:\Robotics Dev\nasa-rmc-control\Control Program\Control Software\obj\Debug\Control Software.pdb
