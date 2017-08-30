@@ -2,7 +2,7 @@
 
 namespace Communication_Software
 {
-    class Program
+    internal class CommunicationProgram
     {
         static void Main(string[] args)
         {
