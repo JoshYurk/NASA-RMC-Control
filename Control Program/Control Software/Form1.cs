@@ -32,7 +32,7 @@ namespace Control_Software
             var baseDirectory = Directory.GetParent(directory).FullName;
             var strings = baseDirectory.Split('\\');
 
-            if (!strings.Last().Contains("Control Program"))
+            if (!strings.Last().Contains(Constants.ProgramBaseFolderName))
             {
                 return GetBaseDirectory(baseDirectory);
             }
