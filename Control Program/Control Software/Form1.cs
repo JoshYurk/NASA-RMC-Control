@@ -16,6 +16,17 @@ namespace Control_Software
         public Form1()
         {
             InitializeComponent();
+
+            var button = new Button();
+            button.Text = @"Start Communication Software";
+            button.Click += Button_Click;
+            button.AutoSize = true;
+
+            Controls.Add(button);
+        }
+
+        private void Button_Click(object sender, EventArgs e)
+        {
             StartCommunicationSoftware();
         }
 
