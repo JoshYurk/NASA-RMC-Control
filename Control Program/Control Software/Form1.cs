@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Control_Software.Getters;
 using Core;
 
 namespace Control_Software
@@ -35,23 +36,10 @@ namespace Control_Software
 
         protected void StartCommunicationSoftware()
         {
-            var baseDirectory = GetBaseDirectory(Directory.GetCurrentDirectory());
+            var baseDirectory = DirectoryGetter.GetBaseDirectory(Directory.GetCurrentDirectory());
             var communicationUrl = baseDirectory + "\\Communication Software\\bin\\Debug\\Communication Software.exe";
 
             System.Diagnostics.Process.Start(communicationUrl);
         }
-
-        private static string GetBaseDirectory(string directory)
-        {
-            var baseDirectory = Directory.GetParent(directory).FullName;
-            var strings = baseDirectory.Split('\\');
-
-            if (!strings.Last().Contains(Constants.ProgramBaseFolderName))
-            {
-                return GetBaseDirectory(baseDirectory);
-            }
-            return baseDirectory;
-        }
-            
     }
 }
