@@ -178,6 +178,9 @@ namespace Control_Program
                         _connectButton.Text = @"Disconnect From Robot";
                         var connectionInformationText = _connectionInformation.Text;
                         _connectionInformation.Text = connectionInformationText + RobotIpAddress;
+                        var sshCommand = client.RunCommand("df -h");
+
+                        var sshCommandCommandText = sshCommand.CommandText;
                     }
                     else
                     {
