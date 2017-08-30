@@ -1,8 +1,0 @@
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\bin\Debug\Communication Software.exe.config
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\bin\Debug\Communication Software.exe
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\bin\Debug\Communication Software.pdb
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\bin\Debug\Renci.SshNet.dll
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\bin\Debug\Renci.SshNet.xml
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\obj\Debug\Communication Software.csprojResolveAssemblyReference.cache
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\obj\Debug\Communication Software.exe
-C:\Robotics Dev\nasa-rmc-control\Control Program\Communication Software\obj\Debug\Communication Software.pdb
