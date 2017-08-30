@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Core;
 
 namespace Control_Software
 {
@@ -17,8 +18,10 @@ namespace Control_Software
         {
             InitializeComponent();
 
-            var button = new Button();
-            button.Text = @"Start Communication Software";
+            var button = new Button
+            {
+                Text = @"Start Communication Software"
+            };
             button.Click += Button_Click;
             button.AutoSize = true;
 
