@@ -1,14 +1,19 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using Core;
-using Core.Enums;
 using Renci.SshNet;
 
 namespace Communication_Software
 {
     internal class CommunicationProgram
     {
+        private const int MfBycommand = 0x00000000;
+        public const int ScClose = 0xF060;
+
         private static void Main(string[] args)
         {
+            RemoveButtons();
             Console.Title = "Communication Software";
             Console.WriteLine("Kent State Robotics NASA Communication Software");
             StartSshConnection();
@@ -26,14 +31,13 @@ namespace Communication_Software
                     if (sshClient.IsConnected)
                     {
                         Console.WriteLine("Connected");
-                        if (Constants.RobotOperatingSystem == RobotOperatingSystems.Linux.OperatingSystem)
-                        {
-                            sshClient.RunCommand("ls");
-                        }
-                        else if (Constants.RobotOperatingSystem == RobotOperatingSystems.Windows.OperatingSystem)
-                        {
-                            sshClient.RunCommand("dir");
-                        }
+                        var runCommand = sshClient.RunCommand("python server.py");
+
+                        var streamReader = new StreamReader(runCommand.OutputStream);
+                        Console.Write(streamReader.ReadToEnd());
+
+                        Console.WriteLine(runCommand.Error);
+                        Console.WriteLine(runCommand.ExitStatus);
                     }
                     else
                     {
@@ -45,6 +49,20 @@ namespace Communication_Software
                     Console.WriteLine("Error Connecting");
                 }
             }
+        }        
+
+        [DllImport("user32.dll")]
+        public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+        private static extern IntPtr GetConsoleWindow();
+
+        static void RemoveButtons()
+        {
+            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), ScClose, MfBycommand);
         }
     }
 }
