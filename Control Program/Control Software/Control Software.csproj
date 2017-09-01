@@ -77,6 +77,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Communication Software\Communication Software.csproj">
+      <Project>{2306928d-2ba3-48f6-8e16-53e069a93cdf}</Project>
+      <Name>Communication Software</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{6ca3b7ca-5efa-4f3c-a430-6475f447dc49}</Project>
       <Name>Core</Name>

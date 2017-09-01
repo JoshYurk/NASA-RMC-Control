@@ -2,15 +2,17 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using Communication_Software;
 using Control_Software.Getters;
 
 namespace Control_Software
 {
     public sealed partial class Form1 : Form
     {
-        private static bool _isCommsStarted = false;
+        private static bool _isCommsStarted;
         private static Process _process;
 
+        private static readonly Button CommunicationButton = new Button();
 
         public Form1()
         {
@@ -18,28 +20,24 @@ namespace Control_Software
             Text = @"NASA Control Program";
             WindowState = FormWindowState.Maximized;
 
-            var button = new Button
-            {
-                Text = @"Start Communication Software"
-            };
-            button.Click += Button_Click;
-            button.AutoSize = true;
+            CommunicationButton.Text = @"Start Communication Software";
+            CommunicationButton.Click += Button_Click;
+            CommunicationButton.AutoSize = true;
 
-            Controls.Add(button);
+            Controls.Add(CommunicationButton);
         }
 
         private static void Button_Click(object sender, EventArgs e)
         {
-            var button = (Button)sender;
             if (_isCommsStarted == false)
             {
                 StartCommunicationSoftware();
-                button.Text = @"Stop Communication Software";
+                CommunicationButton.Text = @"Stop Communication Software";
             }
             else
             {
                 EndCommunicationSoftware();
-                button.Text = @"Start Communication Software";
+                CommunicationButton.Text = @"Start Communication Software";
             }
         }
 
@@ -54,6 +52,7 @@ namespace Control_Software
 
         private static void EndCommunicationSoftware()
         {
+            CommandSender.ShutdownServerProcess();
             _isCommsStarted = false;
             _process.CloseMainWindow();
             _process.Close();
