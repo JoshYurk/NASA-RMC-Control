@@ -34,10 +34,12 @@ namespace Communication_Software
                         var runCommand = sshClient.RunCommand("python server.py");
 
                         var streamReader = new StreamReader(runCommand.OutputStream);
-                        Console.Write(streamReader.ReadToEnd());
+                        Console.Write(streamReader.Read());
 
                         Console.WriteLine(runCommand.Error);
                         Console.WriteLine(runCommand.ExitStatus);
+                        runCommand.Dispose();
+                        streamReader.Close();
                     }
                     else
                     {
