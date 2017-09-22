@@ -14,6 +14,10 @@ namespace Communication_Software
             Console.ReadLine();
         }
 
+        private static void InitRobotConnection() {
+
+        }
+
         private static void StartSshConnection()
         {
             using (var sshClient = new SshClient(Constants.RobotIpAddress, Constants.RobotUsername, Constants.RobotPassword))

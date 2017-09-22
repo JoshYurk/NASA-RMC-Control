@@ -47,6 +47,8 @@
   <ItemGroup>
     <Compile Include="CommunicationProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RobotConnection.cs" />
+    <Compile Include="DataToSend.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
