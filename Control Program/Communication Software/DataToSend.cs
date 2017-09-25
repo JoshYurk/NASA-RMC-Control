@@ -1,20 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Communication_Software {
+    /// <summary>
+    /// Stores and parses data to send and received from robot
+    /// </summary>
     class DataToSend {
 
-        //
-
-        DataToSend() {
-
+        /// <summary>
+        /// Add and modify the data in here to denote the integer data needed to be comminicated with the robot. The order of values must match on robot's program
+        /// </summary>
+        public enum dataId {
+            Moter1,
+            Moter2,
+            Moter3,
+            Moter4
         }
+
+        int[] dataArray = new int[Enum.GetNames(typeof(dataId)).Length];
+
+        public DataToSend() {}
+        /// <summary>
+        /// Take string received from robot and make a DataToSend object out of it
+        /// </summary>
+        /// <param name="data">Data received from robot</param>
+        public DataToSend(string data) {
+            string[] input = data.Split(new char[]{ '|',':'});
+            for(int i = 0; i < input.Length; i += 2) {
+                int index, value= 0;
+                if (int.TryParse(input[i], out index) && int.TryParse(input[i + 1], out value) && index < dataArray.Length) break;
+                dataArray[index] = value;
+            }
+        }
+
+        public int GetData(dataId idenifier) {
+            return dataArray[(int)idenifier];
+        }
+
+        public void SetData(dataId idenifier, int data) {
+            dataArray[(int)idenifier] = data;
+        }
+
+        /// <summary>
+        /// Turns object into a string to send to robot
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() {
-            //TODO Put fields to proper json format and return it
-            return "";
+            string output = "";
+            for(int i = 0; i < dataArray.Length; i++) {
+                output += i + ':' + dataArray[i] + '|';
+            }
+            return output;
+        }
+        /// <summary>
+        /// Minimize network infomation by removing data that didn't change
+        /// </summary>
+        /// <param name="current">Last DataToSend sent to robot</param>
+        /// <returns></returns>
+        public string ToString(DataToSend current) {
+            string output = "";
+            for (int i = 0; i < dataArray.Length; i++) {
+                if (current.dataArray[i] != dataArray[i]) {
+                    output += i + ':' + dataArray[i] + '|';
+                }
+            }
+            return output;
         }
 
     }
