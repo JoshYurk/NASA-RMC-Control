@@ -13,8 +13,14 @@ namespace Communication_Software {
             Moter1,
             Moter2,
             Moter3,
-            Moter4
+            Moter4,
+            Error1,
+            Sensor1
         }
+
+        public const dataId[] ControlAuthority = {Moter1, Moter2, Moter3, Moter4};
+        public const dataId[] Errors = {Error1};
+        public const dataId[] RobotAuthority = {Sensor1};
 
         int[] dataArray = new int[Enum.GetNames(typeof(dataId)).Length];
 
@@ -46,8 +52,11 @@ namespace Communication_Software {
         /// <returns></returns>
         public override string ToString() {
             string output = "";
-            for(int i = 0; i < dataArray.Length; i++) {
-                output += i + ':' + dataArray[i] + '|';
+            foreach(dataId id in ControlAuthority){
+                output += (int)id + ':' + dataArray[id] + '|';
+            }
+            foreach(dataId id in Errors){
+                output += (int)id + ':' + dataArray[id] + '|';
             }
             return output;
         }
@@ -58,9 +67,14 @@ namespace Communication_Software {
         /// <returns></returns>
         public string ToString(DataToSend current) {
             string output = "";
-            for (int i = 0; i < dataArray.Length; i++) {
+            foreach(dataId id in ControlAuthority){
+                if (current.dataArray[id] != dataArray[id]) {
+                    output += (int)id + ':' + dataArray[id] + '|';
+                }
+            }
+            foreach(dataId id in Errors){
                 if (current.dataArray[i] != dataArray[i]) {
-                    output += i + ':' + dataArray[i] + '|';
+                    output += (int)id + ':' + dataArray[id] + '|';
                 }
             }
             return output;

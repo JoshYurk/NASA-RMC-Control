@@ -10,6 +10,8 @@ namespace Communication_Software {
     internal class RobotConnection {
         Socket Conn;
         int ReconnectAtempts = 0;
+        const int MaxReconnectAtempts = 5;
+        byte[] Buffer = new byte[1024];
 
         RobotConnection(string Ip, int Port) {
             Conn = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -19,10 +21,14 @@ namespace Communication_Software {
         private void CallBeginConnect(IAsyncResult res) {
             try {
                 Conn.EndConnect(res);
-
-            } catch(SocketException) {
+                Conn.BeginReceive(Buffer, 0, 1024, SocketFlags.None, EndReceive, null);
+            } catch(SocketException e) {
                 ReconnectAtempts++;
-               // Conn.BeginConnect
+                if(ReconnectAtempts >= MaxReconnectAtempts){
+                    Conn.BeginConnect(Ip, Port, CallBeginConnect, null);
+                } else {
+                    throw e;
+                }
             }
         }
 
@@ -31,7 +37,7 @@ namespace Communication_Software {
             try {
                 Conn.BeginSend(Buffer, 0, Buffer.Length, SocketFlags.None, EndSendCall, null);
             } catch(SocketException e) {
-
+                
             }
         }
 
@@ -42,11 +48,19 @@ namespace Communication_Software {
 
         private void Reconnect() {
             Conn.Disconnect(true);
-           // Conn.BeginConnect(Ip, Port, CallBeginConnect, null);
+            ReconnectAtempts = 0;
+            Conn.BeginConnect(Ip, Port, CallBeginConnect, null);
         }
         //TODO Receive
-        //TODO Throw exception if cannot reconnect
+        private void EndReceive(IAsyncResult res){
+            int Size = Conn.EndReceive(res);
+            string dataString = Encoding.ASCII.GetString(Buffer, 0, Size);
+            DataToSend data = new DataToSend(dataString);
+            dataReceive(data);
+            Conn.BeginReceive(Buffer, 0, 1024, SocketFlags.None, EndReceive, null);
+        }
 
+        public event DataToSend dataReceive;
 
 
 
