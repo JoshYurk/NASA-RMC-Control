@@ -1,68 +1,94 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
-using System.Net;
 
 namespace Communication_Software {
-    internal class RobotConnection {
-        Socket Conn;
-        int ReconnectAtempts = 0;
-        const int MaxReconnectAtempts = 5;
-        byte[] Buffer = new byte[1024];
+    class RobotConnection {
+        public bool ready { private set; get; } = false;
+        private Socket Conn;
+        private int ReconnectAtempts = 0;
+        private const int MAX_RECONNECT_ATEMPTS = 5;
+        private byte[] Buffer = new byte[1024];
+        private string Ip;
+        private int Port;
 
-        RobotConnection(string Ip, int Port) {
+        /// <summary>
+        /// Create new connection to robot
+        /// </summary>
+        /// <param name="Ip">Ip address of robot</param>
+        /// <param name="Port">TCP Port used to communicate with robot</param>
+        public RobotConnection(string Ip, int Port) {
+            this.Ip = Ip;
+            this.Port = Port;
             Conn = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Conn.BeginConnect(Ip, Port, CallBeginConnect, null);
+            Conn.BeginConnect(Ip, Port, EndBeginConnect, null);
         }
 
-        private void CallBeginConnect(IAsyncResult res) {
+        /// <summary>
+        /// Delegate for the received event
+        /// </summary>
+        /// <param name="connection">The RobotConnection that received data from the robot</param>
+        /// <param name="data">The data received from the robot</param>
+        public delegate void receivedEventHandler(object connection, ComData data);
+        /// <summary>
+        /// Event that is fired when data is received from the robot
+        /// </summary>
+        public event receivedEventHandler received;
+
+        public void SendData(ComData Data) {
+            if (!ready) throw new Exception("Connection not yet established");
+            byte[] Buffer = Encoding.ASCII.GetBytes(Data.ToString());
+            try {
+                Conn.BeginSend(Buffer, 0, Buffer.Length, SocketFlags.None, EndSendCall, null);
+            }
+            catch (SocketException e) {
+                Reconnect();
+            }
+        }
+
+        #region privateMethods
+        private void EndBeginConnect(IAsyncResult res) {
             try {
                 Conn.EndConnect(res);
                 Conn.BeginReceive(Buffer, 0, 1024, SocketFlags.None, EndReceive, null);
+                ready = true;
             } catch(SocketException e) {
                 ReconnectAtempts++;
-                if(ReconnectAtempts >= MaxReconnectAtempts){
-                    Conn.BeginConnect(Ip, Port, CallBeginConnect, null);
+                if(ReconnectAtempts >= MAX_RECONNECT_ATEMPTS){
+                    Conn.BeginConnect(Ip, Port, EndBeginConnect, null);
                 } else {
                     throw e;
                 }
             }
         }
 
-        public void SendData(DataToSend Data) {
-            byte[] Buffer = Encoding.ASCII.GetBytes(Data.ToString());
-            try {
-                Conn.BeginSend(Buffer, 0, Buffer.Length, SocketFlags.None, EndSendCall, null);
-            } catch(SocketException e) {
-                
-            }
-        }
-
         private void EndSendCall(IAsyncResult res) {
             Conn.EndSend(res);
-
         }
 
         private void Reconnect() {
+            ready = false;
             Conn.Disconnect(true);
             ReconnectAtempts = 0;
-            Conn.BeginConnect(Ip, Port, CallBeginConnect, null);
+            Conn.BeginConnect(Ip, Port, EndBeginConnect, null);
         }
-        //TODO Receive
+
         private void EndReceive(IAsyncResult res){
-            int Size = Conn.EndReceive(res);
-            string dataString = Encoding.ASCII.GetString(Buffer, 0, Size);
-            DataToSend data = new DataToSend(dataString);
-            dataReceive(data);
-            Conn.BeginReceive(Buffer, 0, 1024, SocketFlags.None, EndReceive, null);
+            try {
+                int Size = Conn.EndReceive(res);
+                string dataString = Encoding.ASCII.GetString(Buffer, 0, Size);
+                ComData data = new ComData(dataString);
+                OnReceived(data);
+                Conn.BeginReceive(Buffer, 0, 1024, SocketFlags.None, EndReceive, null);
+            } catch(SocketException e) {
+                    Reconnect();
+            }
         }
 
-        public event DataToSend dataReceive;
-
-
+        protected virtual void OnReceived(ComData data) {
+            received?.Invoke(this, data);
+        }
+        #endregion
 
     }
 }
