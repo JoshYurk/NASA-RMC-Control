@@ -7,11 +7,13 @@ namespace Communication_Software
 {
     internal class CommunicationProgram
     {
+        const bool DEBUG = true;
         static RobotConnection conn;
+
         private static void Main(string[] args)
         {
             Console.WriteLine("Kent State Robotics NASA Communication Software");
-            StartSshConnection();
+            //StartSshConnection();
             Console.WriteLine("Enter m to input the robot's address and port manualy, c to use the defaults");
             string mode = Console.ReadLine();
             if (mode.ToLower() == "m") {
@@ -28,6 +30,7 @@ namespace Communication_Software
         private static void DefaultConnection() {
             try {
                 conn = new RobotConnection(Constants.RobotIpAddress, Constants.RobotPort);
+                DebugStartChat();
             } catch (Exception e) {
                 ManualConnect();
             }
@@ -44,9 +47,33 @@ namespace Communication_Software
                     Console.WriteLine("Enter Port: ");
                 }
                 conn = new RobotConnection(Ip, Port);
-            }catch(Exception e) {
+                DebugStartChat();
+            }
+            catch(Exception e) {
                 ManualConnect();
             }
+        }
+
+        private static void DebugStartChat() {
+            if (DEBUG) {
+                conn.received += DebugReceive;
+                conn.disconnect += DebugDisconnect;
+                while (true) {
+                    string input = Console.ReadLine();
+                    if (input == "e") break;
+                    conn.SendData(input);
+                }
+            }
+        }
+
+        private static void DebugDisconnect() {
+            Console.WriteLine("Disconnected");
+            Console.ReadLine();
+            conn.Reconnect();
+        }
+
+        private static void DebugReceive(object source, ComData data) {
+            Console.WriteLine(data.ToString());
         }
 
         private static void StartSshConnection()

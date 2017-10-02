@@ -35,15 +35,30 @@ namespace Communication_Software {
         /// </summary>
         public event receivedEventHandler received;
 
-        public void SendData(ComData Data) {
-            if (!ready) throw new Exception("Connection not yet established");
-            byte[] Buffer = Encoding.ASCII.GetBytes(Data.ToString());
-            try {
-                Conn.BeginSend(Buffer, 0, Buffer.Length, SocketFlags.None, EndSendCall, null);
+        public delegate void disconnectEventHandler();
+        public event disconnectEventHandler disconnect;
+
+        /// <summary>
+        /// Sends data to robot, will do nothing if conn not yet established
+        /// </summary>
+        /// <param name="Data"></param>
+        public void SendData(string Data) {
+            if (ready) {
+                byte[] Buffer = Encoding.ASCII.GetBytes(Data);
+                try {
+                    Conn.BeginSend(Buffer, 0, Data.Length, SocketFlags.None, EndSendCall, null);
+                }
+                catch (SocketException e) {
+                    Reconnect();
+                }
             }
-            catch (SocketException e) {
-                Reconnect();
-            }
+        }
+
+        public void Reconnect() {
+            ready = false;
+            Conn = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ReconnectAtempts = 0;
+            Conn.BeginConnect(Ip, Port, EndBeginConnect, null);
         }
 
         #region privateMethods
@@ -57,20 +72,14 @@ namespace Communication_Software {
                 if(ReconnectAtempts >= MAX_RECONNECT_ATEMPTS){
                     Conn.BeginConnect(Ip, Port, EndBeginConnect, null);
                 } else {
-                    throw e;
+                    ready = false;
+                    OnDisconnect();
                 }
             }
         }
 
         private void EndSendCall(IAsyncResult res) {
             Conn.EndSend(res);
-        }
-
-        private void Reconnect() {
-            ready = false;
-            Conn.Disconnect(true);
-            ReconnectAtempts = 0;
-            Conn.BeginConnect(Ip, Port, EndBeginConnect, null);
         }
 
         private void EndReceive(IAsyncResult res){
@@ -87,6 +96,10 @@ namespace Communication_Software {
 
         protected virtual void OnReceived(ComData data) {
             received?.Invoke(this, data);
+        }
+
+        protected virtual void OnDisconnect() {
+            disconnect?.Invoke();
         }
         #endregion
 

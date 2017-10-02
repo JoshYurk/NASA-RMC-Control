@@ -9,7 +9,7 @@ namespace Communication_Software {
         /// <summary>
         /// Add and modify the data in here to denote the integer data needed to be comminicated with the robot. The order of values must match on robot's program
         /// </summary>
-        public enum  dataId {
+        public enum dataId {
             Moter1,
             Moter2,
             Moter3,
@@ -20,17 +20,17 @@ namespace Communication_Software {
 
         private int[] dataArray = new int[Enum.GetNames(typeof(dataId)).Length];
 
-        public ComData() {}
+        public ComData() { }
 
         /// <summary>
         /// Take string received from robot and make a ComData object out of it
         /// </summary>
         /// <param name="data">Data received from robot</param>
         public ComData(string data) {
-            string[] input = data.Split(new char[]{ '|',':'});
-            for(int i = 0; i < input.Length; i += 2) {
-                int index, value= 0;
-                if (int.TryParse(input[i], out index) && int.TryParse(input[i + 1], out value) && index < dataArray.Length) break;
+            string[] input = data.Split(new char[] { '|', ':' });
+            for (int i = 0; i < input.Length - 1; i += 2) {
+                int index, value = 0;
+                if (!int.TryParse(input[i], out index) || !int.TryParse(input[i + 1], out value) || !(index < dataArray.Length)) break;
                 dataArray[index] = value;
             }
         }
@@ -48,11 +48,7 @@ namespace Communication_Software {
         /// </summary>
         /// <returns></returns>
         public override string ToString() {
-            string output = "";
-            for (int i = 0; i < dataArray.Length; i++) {
-                output += i + ':' + dataArray[i] + '|';
-            }
-            return output;
+            return ToString(null);
         }
 
         /// <summary>
@@ -63,8 +59,8 @@ namespace Communication_Software {
         public string ToString(ComData current) {
             string output = "";
             for (int i = 0; i < dataArray.Length; i++) {
-                if (current.dataArray[i] != dataArray[i]) {
-                    output += i + ':' + dataArray[i] + '|';
+                if (current == null || current.dataArray[i] != dataArray[i]) {
+                    output += i.ToString() + ':' + dataArray[i].ToString() + '|';
                 }
             }
             return output;
