@@ -6,7 +6,7 @@ GOTO :CMDSCRIPT
 ::CMDLITERAL
 
 # Linux Bash here
-echo "Here we're running ${SHELL}"
+echo "Start the robot program with this line"
 exit $?
 
 # Windows Batch here

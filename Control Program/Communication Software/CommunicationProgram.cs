@@ -5,6 +5,9 @@ using Renci.SshNet;
 
 namespace Communication_Software
 {
+    /// <summary>
+    /// This file should not be used in the release
+    /// </summary>
     internal class CommunicationProgram
     {
         const bool DEBUG = true;
@@ -14,24 +17,29 @@ namespace Communication_Software
         {
             Console.WriteLine("Kent State Robotics NASA Communication Software");
             //StartSshConnection();
-            Console.WriteLine("Enter m to input the robot's address and port manualy, c to use the defaults");
-            string mode = Console.ReadLine();
-            if (mode.ToLower() == "m") {
-                ManualConnect();
+            DefaultConnection();
+            if (DEBUG) {
+                Console.WriteLine("Enter m to input the robot's address and port manualy, c to use the defaults");
+                string mode = Console.ReadLine();
+                if (mode.ToLower() == "m") {
+                    ManualConnect();
+                }
+                else {
+                    DefaultConnection();
+                }
+                Console.WriteLine("Connection established");
             }
-            else {
-                DefaultConnection();
-            }
-            Console.WriteLine("Connection established");
             Console.WriteLine("Press any key to exit...");
             Console.ReadLine();
         }
 
         private static void DefaultConnection() {
             try {
+                Console.WriteLine("Connecting to robot");
                 conn = new RobotConnection(Constants.RobotIpAddress, Constants.RobotPort);
-                DebugStartChat();
+                if(DEBUG) DebugStartChat();
             } catch (Exception e) {
+                Console.WriteLine("Failed to automaticly connect to robot");
                 ManualConnect();
             }
             
@@ -39,7 +47,6 @@ namespace Communication_Software
 
         private static void ManualConnect() {
             try {
-                Console.WriteLine("Could not connect to robot, enter robot address manualy: ");
                 string Ip = Console.ReadLine();
                 Console.WriteLine("Enter Port: ");
                 int Port;
@@ -47,22 +54,22 @@ namespace Communication_Software
                     Console.WriteLine("Enter Port: ");
                 }
                 conn = new RobotConnection(Ip, Port);
-                DebugStartChat();
+                if (DEBUG) DebugStartChat();
             }
             catch(Exception e) {
+                Console.WriteLine(e.Message);
                 ManualConnect();
+                Console.WriteLine("Failed to connect to robot");
             }
         }
 
         private static void DebugStartChat() {
-            if (DEBUG) {
-                conn.received += DebugReceive;
-                conn.disconnect += DebugDisconnect;
-                while (true) {
-                    string input = Console.ReadLine();
-                    if (input == "e") break;
-                    conn.SendData(input);
-                }
+            conn.received += DebugReceive;
+            conn.disconnect += DebugDisconnect;
+            while (true) {
+                string input = Console.ReadLine();
+                if (input == "e") break;
+                conn.SendData(input);
             }
         }
 
@@ -78,6 +85,7 @@ namespace Communication_Software
 
         private static void StartSshConnection()
         {
+            Console.WriteLine("SSHing to bot to launch server");
             using (var sshClient = new SshClient(Constants.RobotIpAddress, Constants.RobotUsername, Constants.RobotPassword))
             {
                 sshClient.Connect();
@@ -85,7 +93,7 @@ namespace Communication_Software
                 {
                     if (Constants.RobotOperatingSystem == RobotOperatingSystems.Linux.OperatingSystem)
                     {
-                        sshClient.RunCommand("ls");
+                        sshClient.RunCommand(Constants.RobotLauchFile);
                     }
                     else if (Constants.RobotOperatingSystem == RobotOperatingSystems.Windows.OperatingSystem)
                     {

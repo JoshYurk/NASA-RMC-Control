@@ -8,5 +8,6 @@
         public static string RobotUsername = "Robot";
         public static string RobotPassword = "Robot";
         public static string RobotOperatingSystem = "Windows";
+        public static string RobotLauchFile = "~/Robot Program/run.cmd";
     }
 }
