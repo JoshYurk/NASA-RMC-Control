@@ -35,7 +35,7 @@ namespace Communication_Software {
             string[] input = data.Split(new char[] { '|', ':' });
             for (int i = 0; i < input.Length - 1; i += 2) {
                 int index, value = 0;
-                if (!int.TryParse(input[i], out index) || !int.TryParse(input[i + 1], out value) || !(index < dataArray.Length)) break;
+                if (!int.TryParse(input[i], out index) || !int.TryParse(input[i + 1], out value) || !(index < dataArray.Length)) continue;
                 dataArray[index] = value;
             }
         }
@@ -45,6 +45,14 @@ namespace Communication_Software {
                 return dataArray[(int)id];
             } set {
                 dataArray[(int)id] = value;
+            }
+        }
+        public int this[int id] {
+            get {
+                return dataArray[id];
+            }
+            set {
+                dataArray[id] = value;
             }
         }
 
@@ -88,10 +96,23 @@ namespace Communication_Software {
                     bitSet[(int)point] = value;
                 }
             }
+            public bool this[int point] {
+                get {
+                    return bitSet[point];
+                }
+                set {
+                    bitSet[point] = value;
+                }
+            }
 
             public Filter(dataId[] dataPoint) {
                 foreach(dataId point in dataPoint) {
                     bitSet[(int)point] = true;
+                }
+            }
+            public Filter(int[] dataPoint) {
+                foreach (int point in dataPoint) {
+                    bitSet[point] = true;
                 }
             }
 
