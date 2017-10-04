@@ -19,16 +19,19 @@ class Filter:
         A bitSet based filter for use in the toString function
         """
         _length = len(dataId)
-        _bitSet = [False] * _length
 
         def __init__(self, points=None):
+            self._bitSet = [False] * self._length
             if points != None:
                 for point in points:
-                    self._bitSet[point] = True
+                    if(point >= 0 and point < self._length):
+                        self._bitSet[point] = True
         
         def __getitem__(self, key):
             if(key < self._length and key >= 0):
                 return self._bitSet[key]
+            else:
+                return False
 
         def __setitem__(self, key, value):
             if(key < self._length and key >= 0):
@@ -55,12 +58,18 @@ class ComControl:
         """
         self._loop.run_in_executor(None, self._send, str.encode(data))
 
-    def onReceivedEvent(self, delegate):
+    def onReceivedEventAdd(self, delegate):
         """
         Event that is called when data is received
         :param delegate: The method(s) to be called when data is received, format is foo(ComData) 
         """
         self._recDeles.append(delegate)
+    def onReceivedEventRemove(self, delegate):
+        """
+        Event that is called when data is received
+        :param delegate: The method(s) to be removed from the call
+        """
+        self._recDeles.remove(delegate)
 
     def _accept(self):
         self._conn, address = self._serv.accept()
@@ -106,10 +115,8 @@ class ComData:
             for item in data.split('|', len(data)):
                     pair = item.split(':', 2)
                     if len(pair) == 2:
-                        print("split")
                         try:
                             if int(pair[0]) < self._dataLength:
-                                print("assign")
                                 self._dataArray[int(pair[0])] = int(pair[1])
                         except ValueError as e:
                             print(e)
@@ -126,13 +133,13 @@ class ComData:
         """
         Turns data into string to be sent to controler
 
-        :param prevData: Previous data sent or received to controler for filtering, is nullable
+        :param prevData: Previous ConData sent or received to controler for filtering, is nullable
         :param filter: A filter that will remove all data not included in the filter, is nullable
         :returns: string to send to controler
         """
         outData = ""
         for i in range(0, self._dataLength):
-            if (prevData == None or prevData[i] == self[i]) and (filter == None or filter[i]):
+            if (prevData == None or prevData[i] != self[i]) and (filter == None or filter[i]):
                 outData += str(i) + ":" + str(self[i]) + "|"
         return outData
 
