@@ -41,9 +41,9 @@ class ComControl:
     """
     This establishes and maintains a connection to the controler
     """
-    _recDeles = []
-
     def __init__(self, port):
+        self._recDeles = [];
+        self._disconDeles = [];
         self._serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._serv.setblocking(1)
         self._serv.bind(('',port))
@@ -70,7 +70,18 @@ class ComControl:
         :param delegate: The method(s) to be removed from the call
         """
         self._recDeles.remove(delegate)
-
+    def onDisconnectEventAdd(self, delegate):
+        """
+        Event that is called when connection is lost
+        :param delegate: The method(s) to be called when data is received, format is foo() 
+        """
+        self._disconDeles.append(delegate)
+    def onDisconnectEventRemove(self, delegate):
+        """
+        Event that is called when connection is lost
+        :param delegate: The method(s) to be removed from the call
+        """
+        self._disconDeles.remove(delegate)
     def _accept(self):
         self._conn, address = self._serv.accept()
         print("Connection established")
@@ -96,7 +107,9 @@ class ComControl:
         data = ComData(data.decode("ascii"))
         for dele in self._recDeles:
             dele(data)
-
+    def _onDisconnect(self):
+        for dele in self._disconDeles:
+            dele()
 class ComData:
     """
     This stores and formats the data used to communicate with the controler
