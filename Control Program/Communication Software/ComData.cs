@@ -1,22 +1,25 @@
 ﻿using System;
 
 namespace Communication_Software {
+
+    /// <summary>
+    /// Add and modify the data in here to denote the integer data needed to be comminicated with the robot. The order of values must match on robot's program
+    /// </summary>
+    public enum dataId {
+        Moter1,
+        Moter2,
+        Moter3,
+        Moter4,
+        Error1,
+        Sensor1
+    }
+
     /// <summary>
     /// Stores and parses data to send and received from robot
     /// </summary>
     class ComData : EventArgs {
 
-        /// <summary>
-        /// Add and modify the data in here to denote the integer data needed to be comminicated with the robot. The order of values must match on robot's program
-        /// </summary>
-        public enum dataId {
-            Moter1,
-            Moter2,
-            Moter3,
-            Moter4,
-            Error1,
-            Sensor1
-        }
+        
 
         /// <summary>
         /// Example filter, points that controler has authority over
@@ -80,42 +83,44 @@ namespace Communication_Software {
             return output;
         }
 
-        /// <summary>
-        /// A bitset that can be used to filter data, default all false
-        /// </summary>
-        public class Filter {
-            private bool[] bitSet = new bool[Enum.GetNames(typeof(dataId)).Length];
+       
 
-            public Filter() {}
+    }
 
-            public bool this[dataId point] {
-                get {
-                    return bitSet[(int)point];
-                }
-                set {
-                    bitSet[(int)point] = value;
-                }
-            }
-            public bool this[int point] {
-                get {
-                    return bitSet[point];
-                }
-                set {
-                    bitSet[point] = value;
-                }
-            }
+    /// <summary>
+    /// A bitset that can be used to filter data, default all false
+    /// </summary>
+    public class Filter {
+        private bool[] bitSet = new bool[Enum.GetNames(typeof(dataId)).Length];
 
-            public Filter(dataId[] dataPoint) {
-                foreach(dataId point in dataPoint) {
-                    bitSet[(int)point] = true;
-                }
-            }
-            public Filter(int[] dataPoint) {
-                foreach (int point in dataPoint) {
-                    bitSet[point] = true;
-                }
-            }
+        public Filter() { }
 
+        public bool this[dataId point] {
+            get {
+                return bitSet[(int)point];
+            }
+            set {
+                bitSet[(int)point] = value;
+            }
+        }
+        public bool this[int point] {
+            get {
+                return bitSet[point];
+            }
+            set {
+                bitSet[point] = value;
+            }
+        }
+
+        public Filter(dataId[] dataPoint) {
+            foreach (dataId point in dataPoint) {
+                bitSet[(int)point] = true;
+            }
+        }
+        public Filter(int[] dataPoint) {
+            foreach (int point in dataPoint) {
+                bitSet[point] = true;
+            }
         }
 
     }
