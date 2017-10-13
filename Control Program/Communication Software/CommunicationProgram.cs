@@ -117,9 +117,9 @@ namespace Communication_Software
                 Data = new ComData("0:7809134");
                 TestHelp("7809134", Data[0].ToString());
                 Data = new ComData("0:7809134|1:44|4:5677|2:456");
-                TestHelp("44", Data[(ComData.dataId)1].ToString());
+                TestHelp("44", Data[(dataId)1].ToString());
                 Data = new ComData("0:7809134|hiu|aefu:ui:|olafe1:44|4:5677|2:456");
-                TestHelp("5677", Data[(ComData.dataId)4].ToString());
+                TestHelp("5677", Data[(dataId)4].ToString());
 
                 Data = new ComData();
                 Data[0] = 45678;
@@ -129,14 +129,14 @@ namespace Communication_Software
 
                 Data = new ComData("0:7809134|1:44|4:5677|2:456");
                 Console.WriteLine(Data.ToString());
-                TestHelp("0:7809134|", Data.ToString(null, new ComData.Filter(new ComData.dataId[] { 0 })));
-                ComData.Filter Filter = new ComData.Filter(new ComData.dataId[] { (ComData.dataId)1, (ComData.dataId)2 });
+                TestHelp("0:7809134|", Data.ToString(null, new Filter(new dataId[] { 0 })));
+                Filter Filter = new Filter(new dataId[] { (dataId)1, (dataId)2 });
                 Filter[2] = false;
-                Filter[(ComData.dataId)3] = true;
+                Filter[(dataId)3] = true;
                 TestHelp("1:44|3:0|", Data.ToString(null, Filter));
                 ComData PrevTest = new ComData("0:7809134|2:456");
                 TestHelp("1:44|4:5677|", Data.ToString(PrevTest, null));
-                TestHelp("1:44|", Data.ToString(PrevTest, new ComData.Filter(new ComData.dataId[] { (ComData.dataId)3, (ComData.dataId)1 })));
+                TestHelp("1:44|", Data.ToString(PrevTest, new Filter(new dataId[] { (dataId)3, (dataId)1 })));
             } catch(Exception e) {
                 Console.WriteLine("TEST CRASHED-------------------------------------------------------------------------------");
                 Console.WriteLine(e);
