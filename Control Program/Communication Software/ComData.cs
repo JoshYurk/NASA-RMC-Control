@@ -6,12 +6,15 @@ namespace Communication_Software {
     /// Add and modify the data in here to denote the integer data needed to be comminicated with the robot. The order of values must match on robot's program
     /// </summary>
     public enum dataId {
-        Moter1,
-        Moter2,
-        Moter3,
-        Moter4,
-        Error1,
-        Sensor1
+        BSMotor = 0,
+        BPMotor = 1,
+        SSMotor = 2,
+        SPMotor = 3,
+        ClawServo = 4,
+        YawAct = 5,
+        PitchAct = 6,
+        ExtentionAct = 7,
+        Error = 8
     }
 
     /// <summary>
@@ -24,7 +27,7 @@ namespace Communication_Software {
         /// <summary>
         /// Example filter, points that controler has authority over
         /// </summary>
-        public static Filter ControlerAuth { get; private set; }  =  new Filter(new dataId[] { dataId.Moter1, dataId.Moter2, dataId.Moter3, dataId.Moter4 });
+        public static Filter ControlerAuth { get; private set; }  =  new Filter(new dataId[] { dataId.BPMotor, dataId.BSMotor, dataId.SPMotor, dataId.SSMotor, dataId.ClawServo, dataId.YawAct, dataId.PitchAct, dataId.ExtentionAct });
 
         private int[] dataArray = new int[Enum.GetNames(typeof(dataId)).Length];
 
